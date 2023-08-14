@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Display and Recording</title>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.2/qrcode.min.js"></script>
+
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            color: #333;
+        }
+        #formContainer {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            margin-bottom: 20px;
+        }
+        #qrcodeDisplay {
+            margin-top: 20px;
+            max-width: 200px;
+            max-height: 200px;
+            display: none; /* Hide by default */
+        }
+        #infoForm button {
+            margin-top: 10px;
+        }
+        /* Additional styles for radio buttons */
+        #statusRadioGroup {
+            display: flex;
+            gap: 20px;
+            margin-top: 10px;
+        }
+        #scanMode {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+        }
+        #signoutButton {
+            background-color: #8EED8E;
+        }
+    </style>
+</head>
+<body>
+    <div id="formContainer">
+        <h2>Enter Your Information</h2>
+        <form id="infoForm">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required><br><br>
+            <label for="surname">Surname:</label>
+            <input type="text" id="surname" name="surname" required><br><br>
+            <label for="studentNo">Student Number:</label>
+            <input type="text" id="studentNo" name="studentNo" required><br><br>
+            <div id="statusRadioGroup">
+                <label>
+                    <input type="radio" name="status" value="checkIn" checked>
+                    Check In
+                </label>
+                <label>
+                    <input type="radio" name="status" value="signOut">
+                    Sign Out
+                </label>
+            </div>
+            <button type="submit">Generate QR Code</button>
+        </form>
+    </div>
+    <img id="qrcodeDisplay"></img>
+    <div id="scanMode">
+        <h3 id="timeActive"></h3>
+        <button id="signoutButton">Sign out</button>
+    </div>
+
+    <script>
+        const qrcodeDisplay = document.getElementById("qrcodeDisplay");
+        const infoForm = document.getElementById("infoForm");
+        const formContainer = document.getElementById("formContainer");
+
+        infoForm.addEventListener("submit", function(event) {
+            event.preventDefault();
+            const name = document.getElementById("name").value;
+            const surname = document.getElementById("surname").value;
+            const studentNo = document.getElementById("studentNo").value;
+            const status = document.querySelector('input[name="status"]:checked').value;
+            const qrCodeData = `${name}>${surname}>${studentNo}>${status}`;
+            generateQRCode(qrCodeData);
+            formContainer.style.display = "none"; // Hide the form
+            displayTime();
+        });
+
+        function displayTime() {
+            document.getElementById("timeActive").textContent = new Date();
+            document.getElementById("scanMode").style.display = "block";
+            document.getElementById("signoutButton").addEventListener('click', () => {
+                const name = document.getElementById("name").value;
+                const surname = document.getElementById("surname").value;
+                const studentNo = document.getElementById("studentNo").value;
+                const qrCodeData = `${name}>${surname}>${studentNo}>${"signout"}`;
+                generateQRCode(qrCodeData);
+                document.getElementById("signoutButton").style.backgroundColor = "#ed8e8e";
+                document.getElementById("signoutButton").disabled = true;
+                alert("Scan to sign out");
+                document.getElementById("signoutButton").innerText = "Signed out";
+            });
+
+            const trackSignIn = setInterval(() => {
+                if (document.getElementById("signoutButton").innerText === "Signed out") {
+                    clearInterval(trackSignIn);
+                }
+                document.getElementById("timeActive").textContent = new Date();
+            }, 1000);
+        }
+
+        function generateQRCode(qrCodeData) {
+            qrcodeDisplay.src = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${qrCodeData}`;
+            qrcodeDisplay.style.display = "block"; // Show the QR code image
+        }
+    </script>
+</body>
+</html>

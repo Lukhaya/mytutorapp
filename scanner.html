@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Scanner</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+        }
+        #scanner-container {
+            position: relative;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+        #video {
+            width: 100%;
+            max-width: 300px;
+        }
+        #recorded-videos {
+            display: flex;
+            overflow-x: auto;
+            margin-top: 20px;
+        }
+        #recorded-videos video {
+            max-width: 150px;
+            margin-right: 10px;
+        }
+        #tableContainer {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            border: 1px solid #ddd;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .button-container {
+            display: flex;
+            gap: 20px;
+        }
+
+        .button {
+            display: flex;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .button:hover {
+            background-color: #0056b3;
+        }
+
+
+    </style>
+</head>
+<body>
+    <div id="scanner-container">
+        <video id="video"></video>
+        <div id="monitorPad" class="button-container">
+            <button class="button">
+                💻 Monitor 
+            </button>
+            <button class="button">
+                ▶️▶ Record 
+            </button>
+        </div>
+    </div>
+    <div id="recorded-videos"></div>
+
+    <script src="https://cdn.rawgit.com/schmich/instascan-builds/master/instascan.min.js"></script>
+    <script>
+        const videoElement = document.getElementById('video');
+        const recordedVideosContainer = document.getElementById('recorded-videos');
+
+        let mediaStream = null;
+        let mediaRecorder = null;
+        let recordingInterval = null;
+        let recordedChunks = [];
+        let attendee = {name:"",surname:"",studentNo:"", clear: function() {
+                this.name = "";
+                this.surname = "";
+                this.studentNo = "";
+            }};
+        let recordedAttendees = [];
+
+        const scanner = new Instascan.Scanner({ video: videoElement });
+        scanner.addListener('scan', function (content) {
+            addAttendee({name:content.split(">")[0],surname:content.split(">")[1],studentNo:content.split(">")[2], status:content.split(">")[3], clear: function() {
+                this.name = "";
+                this.surname = "";
+                this.studentNo = "";
+            }});
+            alert('Please show your face ' + content.split(">")[0]);
+            startRecording();
+        });
+
+        function recordSession(){
+            Instascan.Camera.getCameras().then(cameras => {
+            if (cameras.length > 0) {
+                scanner.start(cameras[0]);
+                navigator.mediaDevices.getUserMedia({
+                    video: { deviceId: cameras[0].deviceId },
+                    audio: true
+                }).then(stream => {
+                    mediaStream = stream;
+                });
+            } else {
+                console.error('No cameras found.');
+            }
+        });}
+        let recording = false;
+        document.getElementById("monitorPad").addEventListener('click',()=>{
+            if (recording == false)recordSession();
+            recording = true;
+        })
+        function startRecording() {
+            if (mediaStream) {
+                recordedChunks = [];
+                mediaRecorder = new MediaRecorder(mediaStream);
+                mediaRecorder.ondataavailable = event => {
+                    if (event.data.size > 0) {
+                        recordedChunks.push(event.data);
+                        console.log('Recorded chunk added. '+recordedChunks.length);
+                    }
+                };
+                mediaRecorder.start();
+                mediaRecorder.onstop = () => {
+                    console.log('Recording stopped.');
+                    if (recordedChunks.length <= 0) {console.log(`Not enough bytes, got ${recordedChunks.length}`);return;}
+                    const blob = new Blob(recordedChunks, { type: 'video/webm' });
+                    const videoUrl = URL.createObjectURL(blob);
+                    const recordedVideoElement = document.createElement('video');
+                    recordedVideoElement.controls = false;
+                    recordedVideoElement.src = videoUrl;
+                    recordedVideosContainer.appendChild(recordedVideoElement);
+                    alert(`Captured thank you!`);
+                    };
+                console.log('Recording started.');
+                recordingInterval = setTimeout(() => {
+                    stopRecording();
+                }, 3000);
+            }
+        }
+
+        function stopRecording() {
+            if (mediaRecorder) {
+                
+                clearTimeout(recordingInterval);
+                mediaRecorder.stop();
+                console.log('Recording manually stopped.');
+                
+            }
+        }
+    </script>
+
+    <div id="tableContainer" style="display: none;">
+        <h2>Recorded Attendees</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Surname</th>
+                    <th>Student Number</th>
+                    <th id="statusC">Check-In Times</th>
+                </tr>
+            </thead>
+            <tbody id="attendeeTableBody">
+                <!-- Attendees will be dynamically added here -->
+            </tbody>
+        </table>
+    </div>
+    <script>
+        const attendeeTableBody = document.getElementById("attendeeTableBody");
+        const tableContainer = document.getElementById("tableContainer");
+
+        // Function to redraw the table with current recorded attendees
+        function redrawTable() {
+            attendeeTableBody.innerHTML = ""; // Clear existing table rows
+            recordedAttendees.forEach(recordedAttendee => {
+                const row = document.createElement("tr");
+                const nameCell = document.createElement("td");
+                nameCell.textContent = recordedAttendee.name;
+                row.appendChild(nameCell);
+                const surnameCell = document.createElement("td");
+                surnameCell.textContent = recordedAttendee.surname;
+                row.appendChild(surnameCell);
+                const studentNoCell = document.createElement("td");
+                studentNoCell.textContent = recordedAttendee.studentNo;
+                row.appendChild(studentNoCell);
+                const checkInTimesCell = document.createElement("td");
+                checkInTimesCell.textContent = recordedAttendee.checkInTimes.map(time => time.toLocaleTimeString()).join(", ");
+                checkInTimesCell.style = recordedAttendee.status == "checkIn"? "background-color: green":"background-color: white";
+                console.log(recordedAttendee.status);
+                row.appendChild(checkInTimesCell);
+                attendeeTableBody.appendChild(row);
+            });
+        }
+
+        // // Example recorded attendees (you can replace this with actual recorded attendees)
+        // recordedAttendees.push({ name: "John", surname: "Doe", studentNo: "123456", });
+        // recordedAttendees.push({ name: "Jane", surname: "Smith", studentNo: "789012" });
+
+        // Call the redrawTable function to populate the table initially
+        redrawTable();
+
+        // Function to add a new attendee
+        function addAttendee(newAttendee) {
+            const existingAttendeeIndex = recordedAttendees.findIndex(
+            attendee => attendee.studentNo === newAttendee.studentNo);
+
+            if (existingAttendeeIndex === -1) {
+                newAttendee.checkInTimes = [new Date()];
+                recordedAttendees.push(newAttendee);
+            } else {
+                recordedAttendees[existingAttendeeIndex].checkInTimes.push(new Date());
+                recordedAttendees[existingAttendeeIndex].status = newAttendee.status;
+            }
+
+            redrawTable();
+            tableContainer.style.display = "block"; // Show the table
+            }
+
+        // Example usage of the addAttendee function
+        // const newAttendee = { name: "Alice", surname: "Johnson", studentNo: "567890" };
+        // addAttendee(newAttendee);
+    </script>
+</body>
+</html>
