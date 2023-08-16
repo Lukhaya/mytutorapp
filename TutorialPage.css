@@ -113,12 +113,19 @@ body {
 }
 
 /* Sign Up Button */
-.sign-up-button {
+.sign-up-button,.delete-button,.update-button {
     background-color: lightgreen;
     border: none;
     padding: 5px 10px;
     border-radius: 5px;
     cursor: pointer;
+    margin: 3px;
+}
+.delete-button {
+    background-color: rgb(219, 69, 69);
+}
+.update-button {
+    background-color: rgb(191, 255, 0);
 }
 
 /* ... Your existing styles ... */

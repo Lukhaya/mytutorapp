@@ -19,17 +19,22 @@
         #content {
             padding: 20px;
         }
-        .button {
+        .tile {
             display: inline-block;
-            padding: 10px 20px;
+            padding: 20px;
             background-color: #007bff;
             color: white;
             text-decoration: none;
-            border-radius: 5px;
+            border-radius: 10px;
             margin: 10px;
+            transition: background-color 0.3s;
         }
-        .button:hover {
+        .tile:hover {
             background-color: #0056b3;
+        }
+        .tile-icon {
+            font-size: 36px;
+            margin-bottom: 10px;
         }
     </style>
 </head>
@@ -41,9 +46,23 @@
 
     <div id="content">
         <p>Explore different sections of our website:</p>
-        <a class="button" href="./TutorialsPage.html">Tutorials</a>
-        <a class="button" href="about.html">About</a>
-        <a class="button" href="contact.html">Contact</a>
+        <a class="tile" href="./TutorialsPage.html">
+            <div class="tile-icon">👨‍💼</div>
+            Tutor Tutorials Manager
+        </a>
+        <a class="tile" href="./LectureVersionTutPage.html">
+            <div class="tile-icon">〽️</div>
+            Lecturer Tutorials Manager
+        </a>
+        <a class="tile" href="./scanner.html">
+            <div class="tile-icon">📹</div>
+            Live Session
+        </a>
+        <a class="tile" href="./stream.html">
+            <div class="tile-icon">✅</div>
+            Check-In
+        </a>
     </div>
 </body>
 </html>
+

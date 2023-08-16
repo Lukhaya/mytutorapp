@@ -22,9 +22,10 @@
     </nav>
 
     <div class="tabs">
-        <button class="tab-button active">View</button>
-        <!-- <button class="tab-button" id="addButton">Add</button>
-        <button class="tab-button">Update</button> -->
+        <button class="tab-button" id="addButton">+ Add Tutorial</button>
+        <button class="tab-button" id="viewPastButton">Past Tutorials</button>
+        <button class="tab-button" id="viewUpcoming" style="display: none;">View Upcoming</button>
+        <!-- <button class="tab-button">Update</button> -->
     </div>
 
     <div class="content">
@@ -42,14 +43,25 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td class="tut-name">Practical 4 Intro to Python</td>
+                        <td class="tut-name">Intro to Programming</td>
                         <td>2023-08-15 10:00 AM</td>
-                        <td>Science Building</td>
-                        <td><button class="sign-up-button">Sign Up</button></td>
+                        <td>Room 101</td>
+                        <td><button class="update-button">Update</button></td>
+                        <td><button class="delete-button">Remove</button></td>
                     </tr>
                     <!-- More tutorial rows here -->
                 </tbody>
             </table>
+        </div>
+      
+        <!-- Add Tab Content -->
+        <div class="tab-content">
+            <!-- Add form content here -->
+        </div>
+
+        <!-- Update Tab Content -->
+        <div class="tab-content">
+            <!-- Update form content here -->
         </div>
     </div>
      <!-- QUICK Links  -->
@@ -58,7 +70,26 @@
         <a href="./scanner.html">Track tutors</a>
         <span> | </span>
         <a href="./stream.html">Check in</a>
+        <span> | </span>
+        <a href="./TutorialsPage.html">View as Tutor</a>
     </div>
-    <script src="./TutorialsPage.js" type="module"></script>
+    <script src="./LVTutorials.js" type="module"></script>
+
+    <!-- Modal for adding tutorials -->
+    <div id="addModal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="closeButton">&times;</span>
+            <h2>Add Tutorial</h2>
+            <form id="addForm">
+                <label for="title">Title:</label>
+                <input type="text" id="title" name="title" required><br><br>
+                <label for="dateTime">Date and Time:</label>
+                <input type="datetime-local" id="dateTime" name="dateTime" required><br><br>
+                <label for="venue">Venue:</label>
+                <input type="text" id="venue" name="venue" required><br><br>
+                <button type="submit">Add Tutorial</button>
+            </form>
+        </div>
+    </div>
 </body>
 </html>

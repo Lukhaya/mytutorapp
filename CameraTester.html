@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Camera Access Page</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f0f0f0;
+        }
+        #content {
+            padding: 20px;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 10px;
+        }
+        .button:hover {
+            background-color: #0056b3;
+        }
+        /* Modal styles */
+        #permissionModal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            z-index: 999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            max-width: 400px;
+            text-align: center;
+        }
+        #closeModalBtn {
+            background-color: #ddd;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="content">
+        <p>Click the button below to request camera access:</p>
+        <button class="button" id="requestCameraAccessBtn">Setup Camera Access</button>
+    </div>
+
+    <!-- Modal for camera access -->
+    <div id="permissionModal">
+        <div class="modal-content">
+            <h2>Camera Access Required</h2>
+            <p>This feature requires access to your camera. Please allow camera access to proceed.</p>
+            <button id="closeModalBtn">Close</button>
+        </div>
+    </div>
+
+    <script>
+        const requestCameraAccessBtn = document.getElementById("requestCameraAccessBtn");
+        const permissionModal = document.getElementById("permissionModal");
+        const closeModalBtn = document.getElementById("closeModalBtn");
+
+        // Check if the browser supports mediaDevices and getUserMedia
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+            requestCameraAccessBtn.addEventListener("click", () => {
+                navigator.mediaDevices.getUserMedia({ video: true , audio:true})
+                    .then(() => {
+                        // User granted camera access
+                        console.log("Camera access granted!");
+                        alert("Perfect! Camera access granted, thank you! \n\nLet's get you working!");
+                        const data = encodeURIComponent('valid');
+                        window.location.href = `./scanner.html?access=${data}`;
+                    })
+                    .catch(() => {
+                        // User denied camera access or an error occurred
+                        permissionModal.style.display = "block";
+                    });
+            });
+
+            closeModalBtn.addEventListener("click", () => {
+                permissionModal.style.display = "none";
+            });
+        } else {
+            // Browser doesn't support getUserMedia
+            console.log("getUserMedia is not supported in this browser.");
+        }
+    </script>
+</body>
+</html>

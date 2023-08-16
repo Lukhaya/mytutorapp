@@ -82,12 +82,15 @@
 <body>
     <div id="scanner-container">
         <video id="video"></video>
-        <div id="monitorPad" class="button-container">
-            <button class="button">
+        <div class="button-container">
+            <button class="button" id="monitorPad">
                 💻 Monitor 
             </button>
             <button class="button">
                 ▶️▶ Record 
+            </button>
+            <button class="button" id="endSessionButton">
+                End Session 
             </button>
         </div>
     </div>
@@ -95,6 +98,13 @@
 
     <script src="https://cdn.rawgit.com/schmich/instascan-builds/master/instascan.min.js"></script>
     <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const data = urlParams.get('access');
+        console.log(data);
+        if (data !== 'valid') {
+            console.log("Data is not valid");
+            window.location.href = "./CameraTester.html";
+        }
         const videoElement = document.getElementById('video');
         const recordedVideosContainer = document.getElementById('recorded-videos');
 
@@ -138,6 +148,11 @@
         document.getElementById("monitorPad").addEventListener('click',()=>{
             if (recording == false)recordSession();
             recording = true;
+        });
+        document.getElementById("endSessionButton").addEventListener('click',()=>{
+            if(confirm("Do you wish end session?") == false) return;
+            const attendeesParam = encodeURIComponent(JSON.stringify(recordedAttendees));
+            window.location.href = `./AttendanceReport.html?attendees=${attendeesParam}`;
         })
         function startRecording() {
             if (mediaStream) {
@@ -164,7 +179,7 @@
                 console.log('Recording started.');
                 recordingInterval = setTimeout(() => {
                     stopRecording();
-                }, 3000);
+                }, 2000);
             }
         }
 

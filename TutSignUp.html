@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tutorial Sign-Up</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+        }
+        
+        /* Navbar */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background-color: lightblue;
+        }
+
+        .navbar-logo img {
+            width: 40px;
+            height: 40px;
+            margin-right: 10px;
+        }
+
+        .navbar-logo span {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .navbar-buttons {
+            display: flex;
+            align-items: center;
+        }
+
+        .round-button {
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            margin-left: 10px;
+            cursor: pointer;
+        }
+
+        .profile-button {
+            background-color: rgb(216, 231, 216);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .profile-button img {
+            max-width: 100%;
+            max-height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .help-button {
+            background-color: lightblue;
+        }
+
+        .logout-button {
+            background-color: lightcoral;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th, td {
+            padding: 8px;
+            border-bottom: 1px solid #ddd;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .signup-button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .signup-button:hover {
+            background-color: #0056b3;
+        }
+
+        .signup-button[disabled] {
+            background-color: #999;
+            cursor: not-allowed;
+        }
+        .profile-button {
+            background-color: rgb(216, 231, 216);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-logo">
+            <img src="https://upload.wikimedia.org/wikipedia/en/thumb/7/7c/University_of_Cape_Town_logo.svg/1200px-University_of_Cape_Town_logo.svg.png" alt="MyTutor Logo">
+            <span>MyTutor App</span>
+        </div>
+        <div class="navbar-buttons">
+            <button class="round-button profile-button">
+                <img src="https://assets.website-files.com/619e8d2e8bd4838a9340a810/647c106477f8934b266ba39c_profile-picture-og.webp" alt="Profile Photo">
+            </button>
+            <button class="round-button help-button">Help</button>
+            <button class="round-button logout-button">Log Out</button>
+        </div>
+    </nav>
+    <div class="container">
+        <h1>Tutorial Sign-Up</h1>
+        <h3 id="tut-name">Tutorial Name</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Time</th>
+                    <th>Available Slots</th>
+                    <th>Sign Up</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>10:00 AM - 12:00 PM</td>
+                    <td><span id="slots-1">5</span></td>
+                    <td><button class="signup-button" data-slot="1" onclick="signUp(1)">Sign Up</button></td>
+                </tr>
+                <tr>
+                    <td>2:00 PM - 4:00 PM</td>
+                    <td><span id="slots-2">3</span></td>
+                    <td><button class="signup-button" data-slot="2" onclick="signUp(2)">Sign Up</button></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const data = urlParams.get('data');
+        console.log(data);
+        const tutorialName = document.querySelector('#tut-name');
+        tutorialName.innerHTML = data;
+        function signUp(slotId) {
+            const slotsElement = document.getElementById(`slots-${slotId}`);
+            const signupButton = document.querySelector(`.signup-button[data-slot="${slotId}"]`);
+            
+            // Update available slots
+            let availableSlots = parseInt(slotsElement.innerText);
+            if (availableSlots > 0) {
+                availableSlots--;
+                slotsElement.innerText = availableSlots;
+            }
+            
+            // Disable the button and change its text
+            signupButton.innerText = "Signed Up";
+            signupButton.disabled = true;
+            signupButton.style.backgroundColor = "#999"; // Change color to indicate signup
+            
+        }
+    </script>
+</body>
+</html>

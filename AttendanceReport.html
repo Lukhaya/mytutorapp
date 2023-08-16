@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Permanent Attendance Report</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+        }
+        
+        /* Navbar */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background-color: lightblue;
+        }
+
+        .navbar-logo img {
+            width: 40px;
+            height: 40px;
+            margin-right: 10px;
+        }
+
+        .navbar-logo span {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .navbar-buttons {
+            display: flex;
+            align-items: center;
+        }
+
+        .round-button {
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            margin-left: 10px;
+            cursor: pointer;
+        }
+
+        .profile-button {
+            background-color: rgb(216, 231, 216);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .profile-button img {
+            max-width: 100%;
+            max-height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .help-button {
+            background-color: lightblue;
+        }
+
+        .logout-button {
+            background-color: lightcoral;
+        }
+
+
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th, td {
+            padding: 8px;
+            border-bottom: 1px solid #ddd;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .status-checkin {
+            background-color: green;
+            color: white;
+        }
+
+        .status-signout {
+            background-color: white;
+            color: black;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-logo">
+            <img src="https://upload.wikimedia.org/wikipedia/en/thumb/7/7c/University_of_Cape_Town_logo.svg/1200px-University_of_Cape_Town_logo.svg.png" alt="MyTutor Logo">
+            <span>MyTutor App</span>
+        </div>
+        <div class="navbar-buttons">
+            <button class="round-button profile-button">
+                <img src="https://assets.website-files.com/619e8d2e8bd4838a9340a810/647c106477f8934b266ba39c_profile-picture-og.webp" alt="Profile Photo">
+            </button>
+            <button class="round-button help-button">Help</button>
+            <button class="round-button logout-button">Log Out</button>
+        </div>
+    </nav>
+    <div class="container">
+        <h1>CSC3022F Tutor Attendance Report</h1>
+        <p>Venue: Scilab 2   Date: 15/08/2023</p>
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Surname</th>
+                    <th>Student Number</th>
+                    <th>Check-In/Out Times</th>
+                </tr>
+            </thead>
+            <tbody id="attendeeTableBody">
+                <!-- Attendees will be dynamically added here -->
+            </tbody>
+        </table>
+    </div>
+    <script>
+        const attendeeTableBody = document.getElementById("attendeeTableBody");
+        const urlParams = new URLSearchParams(window.location.search);
+        const data = urlParams.get('attendees');
+        //const data = urlParams.get('tutdetails');
+        let recordedAttendees = JSON.parse(decodeURIComponent(data));
+        if(recordedAttendees === null){
+            // Mock data for recorded attendees
+            recordedAttendees = [
+                { name: "Amahle", surname: "Jenete", studentNo: "123456", checkInTimes: [new Date().toLocaleTimeString(), new Date().toLocaleTimeString()] },
+                { name: "Inathi", surname: "Mei", studentNo: "789012", checkInTimes: [new Date().toLocaleTimeString()] }
+            ];
+        }
+
+        // Function to redraw the table with current recorded attendees
+        function redrawTable() {
+            attendeeTableBody.innerHTML = ""; // Clear existing table rows
+            recordedAttendees.forEach(recordedAttendee => {
+                const row = document.createElement("tr");
+                const nameCell = document.createElement("td");
+                nameCell.textContent = recordedAttendee.name;
+                row.appendChild(nameCell);
+                const surnameCell = document.createElement("td");
+                surnameCell.textContent = recordedAttendee.surname;
+                row.appendChild(surnameCell);
+                const studentNoCell = document.createElement("td");
+                studentNoCell.textContent = recordedAttendee.studentNo;
+                row.appendChild(studentNoCell);
+                const checkInTimesCell = document.createElement("td");
+                checkInTimesCell.textContent = recordedAttendee.checkInTimes;
+                row.appendChild(checkInTimesCell);
+                attendeeTableBody.appendChild(row);
+            });
+        }
+
+        // Call the redrawTable function to populate the table initially
+        redrawTable();
+    </script>
+</body>
+</html>

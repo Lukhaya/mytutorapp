@@ -1,13 +1,14 @@
 
 const tutorials = [
-    { id: 1, title: "Intro to Programming", dateTime: "2023-08-15 10:00 AM", venue: "Room 101" },
-    { id: 2, title: "Web Development Basics", dateTime: "2023-08-20 2:00 PM", venue: "Room 202" }
-    // Add more mock tutorial data here
+    { id: 1, title: "CSC3003 Tutorial 1", dateTime: "2023-08-15 10:00 AM", venue: "Ishango Lab" },
+    { id: 2, title: "EEE3096S Lab Demo", dateTime: "2023-08-20 2:00 PM", venue: "Menzies White Lab" }
+    
 ];
 
 const tabButtons = document.querySelectorAll('.tab-button');
 const tabContents = document.querySelectorAll('.tab-content');
 const tutorialTable = document.querySelector('.tutorial-table tbody');
+let activeTut = '';
 
 // Display active tab content
 tabButtons.forEach((button, index) => {
@@ -24,6 +25,7 @@ function populateTable() {
     tutorialTable.innerHTML = '';
     tutorials.forEach(tutorial => {
         const row = document.createElement('tr');
+        row.addEventListener('click',()=>{activeTut = tutorial.title;});
         row.innerHTML = `
             <td>${tutorial.title}</td>
             <td>${tutorial.dateTime}</td>
@@ -39,48 +41,17 @@ populateTable();
 
 // Delete tutorial
 tutorialTable.addEventListener('click', (event) => {
-    if (event.target.classList.contains('sign-up-button')) {
+    if (event.target.classList.contains('delete-button')) {
         const rowIndex = event.target.closest('tr').rowIndex - 1;
         tutorials.splice(rowIndex, 1);
         populateTable();
     }
-});
-const addButton = document.getElementById("addButton");
-const closeButton = document.getElementById("closeButton");
-const addForm = document.getElementById("addForm");
-// Show the add modal when clicking the "Add" button
-addButton.addEventListener("click", () => {
-    addModal.style.display = "block";
-    // Hide the add modal when clicking the close button or outside the modal
-    document.getElementById("closeButton").addEventListener("click", () => {
-        addModal.style.display = "none";
-    });
-    // Handle form submission for adding a tutorial
-    document.getElementById("addForm").addEventListener("submit", event => {
-        event.preventDefault();
-
-        const title = document.getElementById("title").value;
-        const dateTime = document.getElementById("dateTime").value;
-        const venue = document.getElementById("venue").value;
-
-        const newTutorial = {
-            id: tutorials.length + 1,
-            title: title,
-            dateTime: dateTime,
-            venue: venue
-        };
-
-        tutorials.push(newTutorial);
-        populateTable();
-        addModal.style.display = "none";
-        addForm.reset();
-    });
-});
-
-window.addEventListener("click", event => {
-    if (event.target === addModal) {
-        addModal.style.display = "none";
+    else if (event.target.classList.contains('sign-up-button')){
+        
+        window.location.href =  `./TutSignUp.html?data=${activeTut}`;
     }
+    
 });
+
 
 
