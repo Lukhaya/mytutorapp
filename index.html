@@ -36,9 +36,81 @@
             font-size: 36px;
             margin-bottom: 10px;
         }
+        /* Navbar */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background-color: lightblue;
+        }
+
+        .navbar-logo img {
+            width: 40px;
+            height: 40px;
+            margin-right: 10px;
+        }
+
+        .navbar-logo span {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .navbar-buttons {
+            display: flex;
+            align-items: center;
+        }
+
+        .round-button {
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            margin-left: 10px;
+            cursor: pointer;
+        }
+
+        .profile-button {
+            background-color: rgb(216, 231, 216);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .profile-button img {
+            max-width: 100%;
+            max-height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .help-button {
+            background-color: lightblue;
+        }
+
+        .logout-button {
+            background-color: lightcoral;
+        }
     </style>
 </head>
 <body>
+    <nav class="navbar">
+        <div class="navbar-logo">
+            <img src="https://upload.wikimedia.org/wikipedia/en/thumb/7/7c/University_of_Cape_Town_logo.svg/1200px-University_of_Cape_Town_logo.svg.png" alt="MyTutor Logo">
+            <!-- <span>MyTutor App</span> -->
+        </div>
+        <div class="navbar-buttons">
+            <button class="round-button profile-button">
+                <img src="https://assets.website-files.com/619e8d2e8bd4838a9340a810/647c106477f8934b266ba39c_profile-picture-og.webp" alt="Profile Photo">
+            </button>
+            <button class="round-button help-button">Help</button>
+            <button class="round-button logout-button">Log Out</button>
+        </div>
+    </nav>
     <div id="header">
         <h1>Welcome to MyTutor Website</h1>
         <p>The best tutor manager app</p>
@@ -58,7 +130,7 @@
             <div class="tile-icon">💻</div>
             Course Manager
         </a>
-        <a class="tile" href="./scanner.html">
+        <a class="tile" href="./LiveSessions.html">
             <div class="tile-icon">📹</div>
             Live Session
         </a>
